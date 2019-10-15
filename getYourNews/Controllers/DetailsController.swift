@@ -12,7 +12,11 @@ class DetailsController: UIViewController {
     var newToShow: New?
     
     @IBOutlet weak var authorLabel: UILabel!
-    @IBOutlet weak var viewInBrowserTextField: UITextView!
+    @IBOutlet weak var imageView: UIImageView!
+    
+    @IBAction func backButtonWasPressed(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,17 +25,33 @@ class DetailsController: UIViewController {
         if let new = newToShow {
             authorLabel.text = new.author
             
-            /*
-            let attributedString = NSMutableAttributedString(string: "View in Browser")
-            let url = URL(string: new.url)!
-            attributedString.setAttributes([.link : url], range:  NSMakeRange(8, 7))
+            print("New")
+            print(new.urlToImage)
             
-            viewInBrowserTextField.attributedText = attributedString
-            viewInBrowserTextField.isUserInteractionEnabled = true
-            viewInBrowserTextField.isEditable = false
-            viewInBrowserTextField.linkTextAttributes = [ .foregroundColor: UIColor.blue, .underlineStyle: NSUnderlineStyle.single.rawValue]
-            */
+            if new.urlToImage != "" {
+                downloadImage(urlToImage: new.urlToImage)
+            } else {
+                imageView.isHidden = true
+            }
         }
     }
 }
 
+extension DetailsController {
+    
+    func downloadImage(urlToImage: String) {
+        print("downloadImage")
+        print(urlToImage)
+        
+        URLSession.shared.dataTask(with: URL(string: urlToImage)!) {
+            data, response, error in
+            
+            print(urlToImage)
+            print(data)
+            
+            DispatchQueue.main.async() {
+                self.imageView.image = UIImage(data: data!)
+            }
+        }.resume()
+    }
+}

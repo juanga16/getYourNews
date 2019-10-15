@@ -23,7 +23,7 @@ class SearchController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        termTextField.text = "Argentina"
+        termTextField.text = "Apple"
         termTextField.becomeFirstResponder()
     }
 }
