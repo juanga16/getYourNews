@@ -14,11 +14,13 @@ class NewsViewCell: SwipeTableViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var publishedAtLabel: UILabel!
     
-    func configure(new: New) {
+    func configure(new: New, foreColor: UIColor) {
         titleLabel.text = new.title
+        titleLabel.textColor = foreColor
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMM-dd HH:mm"
         publishedAtLabel.text = dateFormatter.string(from: new.publishedAt)
+        publishedAtLabel.textColor = foreColor
     }
 }

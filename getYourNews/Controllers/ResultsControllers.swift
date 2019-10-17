@@ -42,8 +42,15 @@ extension ResultsController: UITableViewDelegate, UITableViewDataSource, SwipeTa
         let cell = tableView.dequeueReusableCell(withIdentifier: "newsViewCell") as! NewsViewCell
         let new = news[indexPath.row]
         
+        let colorBlue = UIColor(red: 0/255, green: 122/255, blue: 255/255, alpha: 1)
+        var foreColor = colorBlue
+        
+        if indexPath.row % 2 == 1 {
+            foreColor = UIColor.black
+        }
+        
         cell.delegate = self
-        cell.configure(new: new)
+        cell.configure(new: new, foreColor: foreColor)
         
         return cell
     }
@@ -65,7 +72,7 @@ extension ResultsController: UITableViewDelegate, UITableViewDataSource, SwipeTa
             }
         }
         
-        deleteAction.image = UIImage(named: "delete")
+        deleteAction.image = UIImage(named: "trash")
         
         let viewDetailsAction = SwipeAction(style: .default, title: "View") {
             action, indexPath in
@@ -84,7 +91,7 @@ extension ResultsController: UITableViewDelegate, UITableViewDataSource, SwipeTa
                 UIApplication.shared.open(url)
             }
             
-            browseAction.image = UIImage(named:  "browse")
+            browseAction.image = UIImage(named:  "safari")
             
             actions.append(browseAction)
         }
@@ -126,6 +133,7 @@ extension ResultsController {
     func viewDetails(index: Int) {
         if let detailsController = storyboard?.instantiateViewController(withIdentifier: "detailsController") as? DetailsController {
             let new = news[index]
+            
             detailsController.newToShow = new
             self.present(detailsController, animated: true, completion: nil)
         }
