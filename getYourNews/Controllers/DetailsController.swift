@@ -17,7 +17,7 @@ class DetailsController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var publishedAtLabel: UILabel!
     @IBOutlet weak var contentLabel: UILabel!
-    
+
     @IBAction func backButtonWasPressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }

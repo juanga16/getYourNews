@@ -17,6 +17,7 @@ class ResultsController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var termToSearchLabel: UILabel!
+    @IBOutlet weak var loadingLabel: UILabel!
     
     @IBAction func backButtonWasPressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -27,6 +28,7 @@ class ResultsController: UIViewController {
         // Do any additional setup after loading the view.
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.isHidden = true
 
         termToSearchLabel.text = termToSearch
         getNews()
@@ -60,40 +62,42 @@ extension ResultsController: UITableViewDelegate, UITableViewDataSource, SwipeTa
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-        guard orientation == .right else { return nil }
+        var actions: [SwipeAction] = []
         
-        let deleteAction = SwipeAction(style: .destructive, title: "Remove") {
-            action, indexPath in
-            
-            self.news.remove(at: indexPath.row)
-            
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-        
-        deleteAction.image = UIImage(named: "trash")
-        
-        let viewDetailsAction = SwipeAction(style: .default, title: "View") {
-            action, indexPath in
-            
-            self.viewDetails(index: indexPath.row)
-        }
-        
-        viewDetailsAction.image = UIImage(named:  "view")
-        
-        var actions = [deleteAction, viewDetailsAction]
-        
-        if let url = URL(string: news[indexPath.row].url) {
-            let browseAction = SwipeAction(style: .default, title: "Browse") {
+        if orientation == .right {
+            let deleteAction = SwipeAction(style: .destructive, title: "Remove") {
                 action, indexPath in
-            
-                UIApplication.shared.open(url)
+                
+                self.news.remove(at: indexPath.row)
+                
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
             }
             
-            browseAction.image = UIImage(named:  "safari")
+            deleteAction.image = UIImage(named: "trash")
             
-            actions.append(browseAction)
+            let viewDetailsAction = SwipeAction(style: .default, title: "View") {
+                action, indexPath in
+                
+                self.viewDetails(index: indexPath.row)
+            }
+            
+            viewDetailsAction.image = UIImage(named:  "view")
+            
+            actions = [deleteAction, viewDetailsAction]
+        } else {
+            if let url = URL(string: news[indexPath.row].url) {
+                let browseAction = SwipeAction(style: .default, title: "Browse") {
+                    action, indexPath in
+                    
+                    UIApplication.shared.open(url)
+                }
+                
+                browseAction.image = UIImage(named:  "safari")
+                
+                actions.append(browseAction)
+            }
         }
         
         return actions
@@ -125,7 +129,16 @@ extension ResultsController {
                     self.news.append(new)
                 }
                 
-                self.tableView.reloadData()
+                if self.news.count > 0 {
+                    DispatchQueue.main.async {
+                        self.loadingLabel.isHidden = true
+                        self.tableView.isHidden = false
+                        
+                        self.tableView.reloadData()
+                    }
+                } else {
+                    self.loadingLabel.text = "No results"
+                }
             }
         }
     }
