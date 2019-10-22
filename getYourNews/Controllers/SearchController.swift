@@ -24,6 +24,10 @@ class SearchController: UIViewController {
             return
         }
         
+        // Save the term
+        let defaults = UserDefaults.standard
+        defaults.set(termTextField.text, forKey: "term")
+        
         if let resultsController = storyboard?.instantiateViewController(withIdentifier: "resultsController") as? ResultsController {
             
             resultsController.termToSearch = termTextField.text!
@@ -34,7 +38,14 @@ class SearchController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
         termTextField.text = ""
+        
+        let defaults = UserDefaults.standard
+        if let term = defaults.string(forKey: "term") {
+            termTextField.text = term
+        }
+        
         termTextField.becomeFirstResponder()
     }
 }

@@ -32,7 +32,7 @@ class DetailsController: UIViewController {
             descriptionLabel.text = new.description
             
             if new.urlToImage != "" {
-                downloadImage(urlToImage: new.urlToImage)
+                loadImage(urlToImage: new.urlToImage)
             } else {
                 imageView.isHidden = true
             }
@@ -42,31 +42,47 @@ class DetailsController: UIViewController {
             publishedAtLabel.text = dateFormatter.string(from: new.publishedAt)
             
             contentLabel.text = new.content
-            
-            print("New")
-            print(new.content)
-            print(new.urlToImage)
-            print(new.description)
         }
     }
 }
 
 extension DetailsController {
     
-    func downloadImage(urlToImage: String) {
-        URLSession.shared.dataTask(with: URL(string: urlToImage)!) {
-            data, response, error in
-            
-            if let error = error {
-                print("ERROR DOWNLOADING IMAGE")
-                print(error)
-                
-                return
+    func loadImage(urlToImage: String) {
+        guard let imageUrl = URL(string: urlToImage) else {
+            return
+        }
+        
+        let cache = URLCache.shared
+        let request = URLRequest(url: imageUrl)
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            if let data = cache.cachedResponse(for: request)?.data, let image = UIImage(data: data) {
+                print("Loading Cached Image")
+                self.showImage(image: image)
+            } else {
+                print("Downloading Image")
+                URLSession.shared.dataTask(with: request) {
+                    data, response, error in
+                    
+                    if error != nil {
+                        return
+                    }
+                    
+                    if let data = data, let image = UIImage(data: data) {
+                        let cachedData = CachedURLResponse(response: response!, data: data)
+                        cache.storeCachedResponse(cachedData, for: request)
+                        
+                        self.showImage(image: image)
+                    }
+                }.resume()
             }
-            
-            DispatchQueue.main.async() {
-                self.imageView.image = UIImage(data: data!)
-            }
-        }.resume()
+        }
+    }
+    
+    func showImage(image: UIImage) {
+        DispatchQueue.main.async() {
+            self.imageView.image = image
+        }
     }
 }
