@@ -75,7 +75,7 @@ extension ResultsController: UITableViewDelegate, UITableViewDataSource, SwipeTa
                 }
             }
             
-            deleteAction.image = UIImage(named: "trash")
+            deleteAction.image = UIImage(named: "delete")
             
             let viewDetailsAction = SwipeAction(style: .default, title: "View") {
                 action, indexPath in
@@ -83,7 +83,7 @@ extension ResultsController: UITableViewDelegate, UITableViewDataSource, SwipeTa
                 self.viewDetails(index: indexPath.row)
             }
             
-            viewDetailsAction.image = UIImage(named:  "view")
+            viewDetailsAction.image = UIImage(named: "details")
             
             actions = [deleteAction, viewDetailsAction]
         } else {
@@ -94,7 +94,7 @@ extension ResultsController: UITableViewDelegate, UITableViewDataSource, SwipeTa
                     UIApplication.shared.open(url)
                 }
                 
-                browseAction.image = UIImage(named:  "safari")
+                browseAction.image = UIImage(named: "safari1")
                 
                 actions.append(browseAction)
             }
