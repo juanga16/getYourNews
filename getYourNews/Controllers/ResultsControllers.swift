@@ -94,7 +94,7 @@ extension ResultsController: UITableViewDelegate, UITableViewDataSource, SwipeTa
                     UIApplication.shared.open(url)
                 }
                 
-                browseAction.image = UIImage(named: "safari1")
+                browseAction.image = UIImage(named: "safari")
                 
                 actions.append(browseAction)
             }
